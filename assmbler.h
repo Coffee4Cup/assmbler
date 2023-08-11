@@ -1,18 +1,16 @@
-//
-// Created by itay8 on 10/08/2023.
-//
 
 #ifndef ASSMBLER_ASSMBLER_H
 #define ASSMBLER_ASSMBLER_H
 #define TAB_SIZE 101
-#define MAX_LINE_LEN 80
+#define MAX_LINE_LEN 81 /*instructed that the maximum line length is 80 not including the newline char*/
 #define MAX_LABEL_LEN 31
 #include <stdio.h>
+#include "lookup_table.h"
 
 typedef struct {
-    char label[MAX_LABEL_LEN];
+    char *label;
     int memory_address;
-    int symbol_type
+    int symbol_type;
 }symbol;
 
 typedef struct
@@ -37,18 +35,28 @@ enum commend_types{
 enum {VALID, NOT_VALID};
 enum {TRUE, FALSE};
 enum symbol_type {DATA_TYPE, COMMEND_TYPE};
-/*-------- main methods ------------*/
+/*-------- main functions ------------*/
 void assemble(FILE *file);
-int first_pass(FILE *file);
-int second_pass(FILE *file);
+int first_pass(void);
+int second_pass(void);
 
-/*---------parsing methods-----------*/
+/*---------parsing functions-----------*/
+
 int is_label_decleration(const char *token);
-char * get_label(const char *token);
+char *get_label(const char *token);
 int get_data_type(const char *token);
 void get_data(const char *parameters);
 void skip_white_space(char *parameters);
 void get_string(const char *parameters);
 int is_string(char *parameters);
+int get_commend(const char *token);
+void get_command_parameters(int type, char *token);
 
-#endif //ASSMBLER_ASSMBLER_H
+/*----------implementation of the generic lookup table for symbols------------*/
+
+/*note: I tied to use the lookup table example from the book and implement a generic type of it*/
+struct nlist *symbol_lookup(char *label);
+struct nlist *symbol_install(symbol *data);
+
+
+#endif /*ASSMBLER_ASSMBLER_H*/
